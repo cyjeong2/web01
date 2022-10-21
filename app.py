@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import os
+import dbconn as db
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -41,7 +43,19 @@ def fileupload() :
         f.save(path)
         print('저장성공!!')
         return redirect('/')
-    
+
+@app.route('/bloglist', methods = ['GET']) #methods = ['GET']이 default값
+def bloglist() :
+    conn = db.dbconn()
+    cursor = conn.cursor()
+    sql = '''select * from blog '''
+    cursor.execute(sql)
+    rows = cursor.fetchall() 
+    print(rows)
+    return render_template('bloglist.html', data = rows)
+
+
+
 if __name__ == '__main__' :
     app.run(debug = True, port = 80)
 
